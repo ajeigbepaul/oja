@@ -23,6 +23,9 @@ const LoginScreen = () => {
         }),
         onSubmit: (values) => loginUser(values),
       });
+      const forgetpassword = ()=>{
+        console.log("I have forgotten this password")
+      }
   return (
     <KeyboardAvoidingScreen>
       <View className="flex-1 items-center justify-center">
@@ -69,16 +72,17 @@ const LoginScreen = () => {
               secureTextEntry={true}
               className="flex-1"
             />
+        
             {formik.touched.password && formik.errors.password ? (
               <Text className="text-xs text-red-300 text-center">
                 {formik.errors.password}
               </Text>
             ) : null}
           </View>
-
+          <TouchableOpacity onPress={forgetpassword} className="w-full flex items-end"><Text className="text-red-300">Forgot password</Text></TouchableOpacity>
           <TouchableOpacity
             onPress={formik.handleSubmit}
-            className="mt-5 bg-orange-400 p-3 rounded-lg"
+            className="mt-5 bg-red-400 p-3 rounded-lg"
           >
             <Text className="text-center font-semibold text-white text-lg">
               Login
@@ -89,7 +93,7 @@ const LoginScreen = () => {
           <View className="flex-row space-x-2 justify-center mt-4">
             <Text className="text-gray-500">New to the app?</Text>
             <TouchableOpacity onPress={register}>
-              <Text className="font-semibold text-sm text-orange-300">
+              <Text className="font-semibold text-sm text-red-300">
                 Register
               </Text>
             </TouchableOpacity>
