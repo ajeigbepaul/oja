@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv").config();
 const cors = require("cors");
 const jwt = require('jsonwebtoken')
+const userRoutes = require("./routes/user")
+const verifyRoutes = require("./routes/verificationemail")
 // APP CONNECTION
 const app = express();
 // DB CONNECTION
@@ -28,7 +30,9 @@ app.use(
 //       origin: "https://bamwholesalestores.com",
 //     })
 //   );
-
+// ROUTES
+app.use("/register", userRoutes)
+app.use("/verify", verifyRoutes)
 // LISTEN
   connectDB().then(() => {
     app.listen(process.env.PORT || 8000, () => {
