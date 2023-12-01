@@ -6,7 +6,7 @@ import {
   TextInput,
   Alert,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import KeyboardAvoidingScreen from "../components/KeyboardAvoidingScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
@@ -16,11 +16,24 @@ import * as Yup from "yup";
 import client from "../../api/client";
 const LoginScreen = () => {
   const navigation = useNavigation();
+  const isLoggedIn = async () => {
+    try {
+      const token = await AsyncStorage.getItem("logintoken");
+      if (!token) {
+        navigation.navigate("Main");
+      }
+    } catch (error) {
+      console.log("could not get token", error);
+    }
+  };
+  useEffect(() => {
+    isLoggedIn();
+  }, []);
   const register = () => {
     navigation.navigate("Register");
   };
   const home = () => {
-    navigation.navigate("Home");
+    navigation.navigate("Main");
   };
   const formik = useFormik({
     initialValues: {
