@@ -2,6 +2,7 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
+import HomeScreen from "../screens/HomeScreen";
 const Stack = createStackNavigator();
 const AuthNavigation = () => {
   return (
@@ -16,6 +17,13 @@ const AuthNavigation = () => {
       <Stack.Screen
         name="Register"
         component={RegisterScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Home"
+        component={HomeScreen}
         options={{
           headerShown: false,
         }}

@@ -48,14 +48,12 @@ const RegisterScreen = () => {
         "Registration successfull",
         "You have registered successfully"
       );
+      login()
     } catch (error) {
-      Alert.alert(
-        "Registration failed",
-        "Your registration was not successfull"
-      );
       console.log("Could not register", error);
     }
   };
+
   return (
     <KeyboardAvoidingScreen>
       <View className="flex-1 items-center justify-center">

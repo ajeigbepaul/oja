@@ -21,7 +21,7 @@ const sendVerificationEmail = async (email, verificationToken) => {
     from: "oja.com",
     to: email,
     subject: "Email Verification",
-    text: `Please click the following link to verify your email : http://192.168.254.137/verify/${verificationToken}`,
+    text: `Please click the following link to verify your email : http://192.168.5.137:8000/verify/${verificationToken}`,
   };
   try {
     await transporter.sendMail(mailOptions);
@@ -51,6 +51,7 @@ router.post("/", async (req, res) => {
     await newUser.save();
     // send a verification email to the user
     sendVerificationEmail(newUser.email, newUser.verificationtoken);
+    res.status(201).json({message:"User created"})
   } catch (error) {
     // Handle error appropriately
     console.error(error);

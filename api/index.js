@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv").config();
 const cors = require("cors");
 const jwt = require('jsonwebtoken')
+const userAuth = require("./routes/auth")
 const userRoutes = require("./routes/user")
 const verifyRoutes = require("./routes/verificationemail")
 // APP CONNECTION
@@ -31,6 +32,7 @@ app.use(
 //     })
 //   );
 // ROUTES
+app.use("/auth", userAuth)
 app.use("/register", userRoutes)
 app.use("/verify", verifyRoutes)
 // LISTEN

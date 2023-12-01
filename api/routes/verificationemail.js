@@ -5,7 +5,7 @@ const router = require("express").Router();
 router.get("/:token", async (req, res) => {
     try {
       const token = req.params.token;
-      const user = await User.findOne({ verificationToken: token });
+      const user = await User.findOne({ verificationtoken: token });
       if (!user) {
         return res.status(404).json({ message: "Invalid verification token" });
       }
