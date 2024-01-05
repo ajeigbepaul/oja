@@ -2,8 +2,8 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
-import HomeScreen from "../screens/HomeScreen";
 import AppNavigation from "./AppNavigation";
+import ProductInfoScreen from "../components/ProductInfoScreen";
 const Stack = createStackNavigator();
 const AuthNavigation = () => {
   return (
@@ -25,6 +25,13 @@ const AuthNavigation = () => {
       <Stack.Screen
         name="Main"
         component={AppNavigation}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Info"
+        component={ProductInfoScreen}
         options={{
           headerShown: false,
         }}

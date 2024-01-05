@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   Flatlist,
 } from "react-native";
-import RNPickerSelect from "react-native-picker-select";
 import { SelectList } from "react-native-dropdown-select-list";
 import React, { useCallback, useEffect, useState } from "react";
 import Screen from "../components/Screen";
@@ -16,8 +15,9 @@ import { Icon } from "@rneui/base";
 import SwiperFlatList from "react-native-swiper-flatlist";
 import axios from "axios";
 import ProductItem from "../components/ProductItem";
-// import { deals, offers } from "../data";
+import { useNavigation } from "@react-navigation/native";
 const HomeScreen = () => {
+  const naviagation = useNavigation();
   console.log(deals);
   const [selected, setSelected] = React.useState("");
 
@@ -282,6 +282,18 @@ const HomeScreen = () => {
             <TouchableOpacity
               key={item.id}
               className="w-40 h-[200px] bg-white mb-2 justify-center"
+              onPress={() =>
+                naviagation.navigate("Info", {
+                  id: item?.id,
+                  title: item?.title,
+                  price:item?.price,
+                  carouselImages:item?.carouselImages,
+                  color:item?.color,
+                  size:item?.size,
+                  oldPrice:item?.oldPrice,
+                  item:item
+                })
+              }
             >
               <View className=" m-1 w-40">
                 <Image
