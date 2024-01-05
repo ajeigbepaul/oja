@@ -2,13 +2,17 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import AuthNavigation from "./app/navigation/AuthNavigation";
+import { Provider } from "react-redux";
+import store from "./store";
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <AuthNavigation />
-      <StatusBar style="auto" />
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <AuthNavigation />
+        <StatusBar style="auto" />
+      </NavigationContainer>
+    </Provider>
   );
 }
 

@@ -8,16 +8,29 @@ import {
   TouchableOpacity,
   Text,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import Screen from "./Screen";
 import { Icon } from "@rneui/base";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "../../redux/cartSlice";
 
 const ProductInfoScreen = () => {
   const route = useRoute();
   const { width } = Dimensions.get("window");
   const naviagation = useNavigation();
   const height = (width * 100) / 100;
+  const [addedToCart, setAddedToCart] = useState(false);
+  const dispatch = useDispatch();
+  const addItemToCart = (item) => {
+    setAddedToCart(true);
+    dispatch(addToCart(item));
+    setTimeout(() => {
+      setAddedToCart(false);
+    }, 5000);
+  };
+  const cart = useSelector((state) => state.cart.cart);
+//   console.log(cart);
   return (
     <Screen>
       <ScrollView showsHorizontalScrollIndicator={false}>
@@ -100,7 +113,7 @@ const ProductInfoScreen = () => {
                   marginLeft: 20,
                   marginBottom: 20,
                 }}
-               className="bg-gray-300"
+                className="bg-gray-300"
               >
                 <Icon name="hearto" type="antdesign" color="black" />
               </View>
@@ -136,7 +149,7 @@ const ProductInfoScreen = () => {
 
         <View style={{ padding: 10 }}>
           <Text style={{ fontSize: 15, fontWeight: "bold", marginVertical: 5 }}>
-            Total:
+            Total: ₦ {route?.params?.price}
           </Text>
           <Text className="text-blue-400">
             Free delivery Tomorrow by 3 PM. Order within 10hrs. 30mins
@@ -171,8 +184,9 @@ const ProductInfoScreen = () => {
             marginHorizontal: 10,
             marginVertical: 10,
           }}
+          onPress={() => addItemToCart(route?.params?.item)}
         >
-          <Text>Add to Cart</Text>
+          {addedToCart ? (<Text>Added to Cart</Text>) : (<Text>Add to Cart</Text>)}
         </TouchableOpacity>
         <TouchableOpacity
           style={{

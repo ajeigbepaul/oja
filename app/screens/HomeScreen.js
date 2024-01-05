@@ -16,6 +16,7 @@ import SwiperFlatList from "react-native-swiper-flatlist";
 import axios from "axios";
 import ProductItem from "../components/ProductItem";
 import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
 const HomeScreen = () => {
   const naviagation = useNavigation();
   console.log(deals);
@@ -184,12 +185,18 @@ const HomeScreen = () => {
       size: "8GB RAM, 128GB Storage",
     },
   ];
+  // const filteredProducts = selected
+  //   ? products.filter((product) => {
+  //       const match = product.category === selected;
+  //       return match;
+  //     })
+  //   : products;
+  // Filter logic
   const filteredProducts = selected
-    ? products.filter((product) => {
-        const match = product.category === selected;
-        return match;
-      })
+    ? products.filter((product) => product.category === selected)
     : products;
+  // console.log("Filtered Products:", filteredProducts);
+  const cart = useSelector((state) => state.cart.cart);
   return (
     <Screen>
       <ScrollView>
@@ -261,6 +268,18 @@ const HomeScreen = () => {
             <TouchableOpacity
               key={index}
               className="w-[150px] h-36 flex-row items-center m-3"
+              onPress={() =>
+                naviagation.navigate("Info", {
+                  id: item?.id,
+                  title: item?.title,
+                  price: item?.price,
+                  carouselImages: item?.carouselImages,
+                  color: item?.color,
+                  size: item?.size,
+                  oldPrice: item?.oldPrice,
+                  item: item,
+                })
+              }
             >
               <Image
                 className="w-full h-36 object-cover rounded-md"
@@ -286,12 +305,12 @@ const HomeScreen = () => {
                 naviagation.navigate("Info", {
                   id: item?.id,
                   title: item?.title,
-                  price:item?.price,
-                  carouselImages:item?.carouselImages,
-                  color:item?.color,
-                  size:item?.size,
-                  oldPrice:item?.oldPrice,
-                  item:item
+                  price: item?.price,
+                  carouselImages: item?.carouselImages,
+                  color: item?.color,
+                  size: item?.size,
+                  oldPrice: item?.oldPrice,
+                  item: item,
                 })
               }
             >
@@ -325,9 +344,13 @@ const HomeScreen = () => {
           />
         </View>
         <View className="flex-row flex-wrap bg-white pb-20">
-          {filteredProducts?.map((item, index) => (
-            <ProductItem key={index} item={item} />
-          ))}
+          {filteredProducts == ""
+            ? products?.map((item, index) => (
+                <ProductItem key={index} item={item} />
+              ))
+            : filteredProducts?.map((item, index) => (
+                <ProductItem key={index} item={item} />
+              ))}
         </View>
       </ScrollView>
     </Screen>
