@@ -17,10 +17,12 @@ import axios from "axios";
 import ProductItem from "../components/ProductItem";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
+import { BottomModal, ModalContent, SlideAnimation } from "react-native-modals";
 const HomeScreen = () => {
   const naviagation = useNavigation();
   console.log(deals);
   const [selected, setSelected] = React.useState("");
+  const [modalOpen, setModalOpen] = React.useState(false);
 
   const data = [
     { key: "2", value: "men's clothing" },
@@ -198,162 +200,221 @@ const HomeScreen = () => {
   // console.log("Filtered Products:", filteredProducts);
   const cart = useSelector((state) => state.cart.cart);
   return (
-    <Screen>
-      <ScrollView>
-        <View className="bg-red-300 p-4 flex-row items-center space-x-2">
-          <Pressable className="bg-white flex-row items-center flex-1 space-x-2 p-1 px-2 rounded-md">
-            <Icon name="search" type="font-awesome" size={20} color={"gray"} />
-            <TextInput className="w-full text-gray-400 text-sm">
-              Search OJA
-            </TextInput>
-          </Pressable>
-          <Icon
-            name="microphone"
-            type="font-awesome"
-            size={20}
-            color={"white"}
-          />
-        </View>
-        <View className="p-4 bg-red-200 flex-row items-center space-x-2">
-          <Icon name="location-pin" type="entypo" size={24} />
-          <Pressable>
-            <Text className="text-gray-700">
-              Deliver to Ayobo - Lagos 012345
-            </Text>
-          </Pressable>
-          <Icon
-            name="keyboard-arrow-down"
-            type="material-icons"
-            size={24}
-            color={"gray"}
-          />
-        </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {list.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              className="w-20 h-[106px] bg-white mb-2"
-            >
-              <View className=" m-1 w-20 rounded-md overflow-hidden shadow-md">
-                <Image source={item.image} className="w-20 h-20 object-cover" />
-                <Text className="text-center font-semibold text-gray-500 w-20">
-                  {item.name}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-        <SwiperFlatList
-          autoplay
-          autoplayDelay={4}
-          index={3}
-          autoplayLoop
-          data={item}
-          renderItem={({ item }) => (
-            <Image
-              className="w-screen object-cover"
-              source={item.image}
-              height={200}
-              width={200}
-            />
-          )}
-          // showPagination
-        />
-        <Text className="text-base p-2 font-semibold">
-          Trending Deals of the week
-        </Text>
-        <View className="w-full  flex-row flex-wrap">
-          {/* { uri: item?.image } */}
-          {deals?.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              className="w-[150px] h-36 flex-row items-center m-3"
-              onPress={() =>
-                naviagation.navigate("Info", {
-                  id: item?.id,
-                  title: item?.title,
-                  price: item?.price,
-                  carouselImages: item?.carouselImages,
-                  color: item?.color,
-                  size: item?.size,
-                  oldPrice: item?.oldPrice,
-                  item: item,
-                })
-              }
-            >
-              <Image
-                className="w-full h-36 object-cover rounded-md"
-                source={item?.image}
+    <>
+      <Screen>
+        <ScrollView>
+          <View className="bg-red-300 p-4 flex-row items-center space-x-2">
+            <Pressable className="bg-white flex-row items-center flex-1 space-x-2 p-1 px-2 rounded-md">
+              <Icon
+                name="search"
+                type="font-awesome"
+                size={20}
+                color={"gray"}
               />
-            </TouchableOpacity>
-          ))}
-        </View>
-        <View className="h-[1px] bg-gray-300 w-full mx-auto" />
-        <Text className="p-4 font-semibold text-base bg-white">
-          Today's Deal
-        </Text>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          className="bg-white"
-        >
-          {offers.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              className="w-40 h-[200px] bg-white mb-2 justify-center"
-              onPress={() =>
-                naviagation.navigate("Info", {
-                  id: item?.id,
-                  title: item?.title,
-                  price: item?.price,
-                  carouselImages: item?.carouselImages,
-                  color: item?.color,
-                  size: item?.size,
-                  oldPrice: item?.oldPrice,
-                  item: item,
-                })
-              }
-            >
-              <View className=" m-1 w-40">
-                <Image
-                  source={{ uri: item?.image }}
-                  className="w-40 h-32 object-cover"
-                />
-                <Text className="text-center font-semibold text-gray-100 w-full h-[20px] bg-red-400">
-                  Upto {item.offer}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-        <View className="h-[1px] bg-gray-300 w-full mx-auto" />
-        <View className="bg-white">
-          <SelectList
-            setSelected={(val) => setSelected(val)}
-            data={data}
-            save="value"
-            placeholder="choose category"
-            boxStyles={{
-              borderWidth: 1,
-              backgroundColor: "white",
-              marginVertical: 10,
-              borderColor: "gray",
-              width: 200,
-            }}
-            defaultOption={{ key: "3", value: "jewelery" }}
+              <TextInput className="w-full text-gray-400 text-sm">
+                Search OJA
+              </TextInput>
+            </Pressable>
+            <Icon
+              name="microphone"
+              type="font-awesome"
+              size={20}
+              color={"white"}
+            />
+          </View>
+          <Pressable className="p-4 bg-red-200 flex-row items-center space-x-2">
+            <Icon name="location-pin" type="entypo" size={24} />
+            <Pressable onPress={() => setModalOpen(!modalOpen)}>
+              <Text className="text-gray-700">
+                Deliver to Ayobo - Lagos 012345
+              </Text>
+            </Pressable>
+            <Icon
+              name="keyboard-arrow-down"
+              type="material-icons"
+              size={24}
+              color={"gray"}
+            />
+          </Pressable>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {list.map((item) => (
+              <TouchableOpacity
+                key={item.id}
+                className="w-20 h-[106px] bg-white mb-2"
+              >
+                <View className=" m-1 w-20 rounded-md overflow-hidden shadow-md">
+                  <Image
+                    source={item.image}
+                    className="w-20 h-20 object-cover"
+                  />
+                  <Text className="text-center font-semibold text-gray-500 w-20">
+                    {item.name}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+          <SwiperFlatList
+            autoplay
+            autoplayDelay={4}
+            index={3}
+            autoplayLoop
+            data={item}
+            renderItem={({ item }) => (
+              <Image
+                className="w-screen object-cover"
+                source={item.image}
+                height={200}
+                width={200}
+              />
+            )}
+            // showPagination
           />
-        </View>
-        <View className="flex-row flex-wrap bg-white pb-20">
-          {filteredProducts == ""
-            ? products?.map((item, index) => (
-                <ProductItem key={index} item={item} />
-              ))
-            : filteredProducts?.map((item, index) => (
-                <ProductItem key={index} item={item} />
-              ))}
-        </View>
-      </ScrollView>
-    </Screen>
+          <Text className="text-base p-2 font-semibold">
+            Trending Deals of the week
+          </Text>
+          <View className="w-full  flex-row flex-wrap">
+            {/* { uri: item?.image } */}
+            {deals?.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                className="w-[150px] h-36 flex-row items-center m-3"
+                onPress={() =>
+                  naviagation.navigate("Info", {
+                    id: item?.id,
+                    title: item?.title,
+                    price: item?.price,
+                    carouselImages: item?.carouselImages,
+                    color: item?.color,
+                    size: item?.size,
+                    oldPrice: item?.oldPrice,
+                    item: item,
+                  })
+                }
+              >
+                <Image
+                  className="w-full h-36 object-cover rounded-md"
+                  source={item?.image}
+                />
+              </TouchableOpacity>
+            ))}
+          </View>
+          <View className="h-[1px] bg-gray-300 w-full mx-auto" />
+          <Text className="p-4 font-semibold text-base bg-white">
+            Today's Deal
+          </Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            className="bg-white"
+          >
+            {offers.map((item) => (
+              <TouchableOpacity
+                key={item.id}
+                className="w-40 h-[200px] bg-white mb-2 justify-center"
+                onPress={() =>
+                  naviagation.navigate("Info", {
+                    id: item?.id,
+                    title: item?.title,
+                    price: item?.price,
+                    carouselImages: item?.carouselImages,
+                    color: item?.color,
+                    size: item?.size,
+                    oldPrice: item?.oldPrice,
+                    item: item,
+                  })
+                }
+              >
+                <View className=" m-1 w-40">
+                  <Image
+                    source={{ uri: item?.image }}
+                    className="w-40 h-32 object-cover"
+                  />
+                  <Text className="text-center font-semibold text-gray-100 w-full h-[20px] bg-red-400">
+                    Upto {item.offer}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+          <View className="h-[1px] bg-gray-300 w-full mx-auto" />
+          <View className="bg-white">
+            <SelectList
+              setSelected={(val) => setSelected(val)}
+              data={data}
+              save="value"
+              placeholder="choose category"
+              boxStyles={{
+                borderWidth: 1,
+                backgroundColor: "white",
+                marginVertical: 10,
+                borderColor: "gray",
+                width: 200,
+              }}
+              defaultOption={{ key: "3", value: "jewelery" }}
+            />
+          </View>
+          <View className="flex-row flex-wrap bg-white pb-20">
+            {filteredProducts == ""
+              ? products?.map((item, index) => (
+                  <ProductItem key={index} item={item} />
+                ))
+              : filteredProducts?.map((item, index) => (
+                  <ProductItem key={index} item={item} />
+                ))}
+          </View>
+        </ScrollView>
+      </Screen>
+
+      {/* Other components */}
+      <BottomModal
+        onBackdropPress={() => setModalOpen(!modalOpen)}
+        swipeDirection={["up", "down"]} // can be string or an array
+        swipeThreshold={200} // default 100
+        modalAnimation={
+          new SlideAnimation({
+            slideFrom: "bottom",
+          })
+        }
+        onHardwareBackPress={() => setModalOpen(!modalOpen)}
+        visible={modalOpen}
+        // onSwipeOut={()=> setModalOpen(!modalOpen)}
+        onTouchOutside={() => setModalOpen(!modalOpen)}
+      >
+        <ModalContent style={{ width: "100%", height: 400 }}>
+          <View>
+            <Text className="text-[16px] font-semibold">
+              Choose your Location
+            </Text>
+            <Text className="text-gray-400 text-[16px]">
+              Select a delivery location to see the product availability and
+              delivery options
+            </Text>
+          </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <TouchableOpacity className="w-[140px] p-2 mt-5 border border-gray-300 rounded-md h-[140px] items-center justify-center">
+              <Text className="text-[16px] font-semibold text-blue-400 text-center">
+                Add an Address or pick-up point
+              </Text>
+            </TouchableOpacity>
+          </ScrollView>
+          <View className="mb-0 flex flex-col mt-5">
+            <View className="flex flex-row items-center gap-4 mb-2">
+              <Icon name="location-pin" type="entypo" size={28} color={"gray"} />
+              <Text className="text-gray-400">Enter Zipcode</Text>
+            </View>
+            <View className="flex flex-row items-center gap-4 mb-2">
+              <Icon name="locate-sharp" type="ionicon" size={28} color={"gray"} />
+              <Text className="text-gray-400">Use My Current Location</Text>
+            </View>
+            <View className="flex flex-row items-center gap-4">
+              <Icon name="earth" type="antdesign" size={28} color={"gray"} />
+              <Text className="text-gray-400">Deliver outside Lagos</Text>
+            </View>
+          </View>
+        </ModalContent>
+      </BottomModal>
+    </>
   );
 };
 
