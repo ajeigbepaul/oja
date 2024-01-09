@@ -2,14 +2,8 @@ const router = require("express").Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-// const generateSecret = require("../utils/generateSecret")
 const cryptoRandomStringPromise = import("crypto-random-string");
-// router.get("/",(req,res)=>{
-//     secretKey = generateSecret(20)
-//     res.send({message:"This is the secret key gen", secretKey})
-// })
 const generateSecret = async () => {
-  // const cryptoRandomString = await cryptoRandomStringPromise;
   const { default: cryptoRandomString } = await cryptoRandomStringPromise;
   const secret = cryptoRandomString({ length: 20 });
   return secret;

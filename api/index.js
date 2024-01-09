@@ -1,11 +1,12 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const dotenv = require("dotenv").config();
-const cors = require("cors");
-const jwt = require('jsonwebtoken')
+require('dotenv').config({ path: '.env.local' });
+// const cors = require("cors");
+// const jwt = require('jsonwebtoken')
 const userAuth = require("./routes/auth")
 const userRoutes = require("./routes/user")
 const verifyRoutes = require("./routes/verificationemail")
+const addressRoutes = require("./routes/address")
 // APP CONNECTION
 const app = express();
 // DB CONNECTION
@@ -35,6 +36,7 @@ app.use(
 app.use("/auth", userAuth)
 app.use("/register", userRoutes)
 app.use("/verify", verifyRoutes)
+app.use("/address", addressRoutes)
 // LISTEN
   connectDB().then(() => {
     app.listen(process.env.PORT || 8000, () => {
