@@ -4,15 +4,18 @@ import { NavigationContainer } from "@react-navigation/native";
 import AuthNavigation from "./app/navigation/AuthNavigation";
 import { Provider } from "react-redux";
 import store from "./store";
-import { ModalPortal } from 'react-native-modals';
+import { ModalPortal } from "react-native-modals";
+import { AuthProvider } from "./app/contextApi/authProvider";
 export default function App() {
   return (
     <Provider store={store}>
-      <NavigationContainer>
-        <AuthNavigation />
-        <StatusBar style="auto" />
-        <ModalPortal />
-      </NavigationContainer>
+      <AuthProvider>
+        <NavigationContainer>
+          <AuthNavigation />
+          <StatusBar style="auto" />
+          <ModalPortal />
+        </NavigationContainer>
+      </AuthProvider>
     </Provider>
   );
 }

@@ -3,8 +3,7 @@ import { Icon } from "@rneui/base";
 import HomeScreen from "../screens/HomeScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import TabButton from "../components/TabButton";
-import AccountScreen from "../screens/AccontScreen";
-import color from "../utils.js/colors";
+import CartScreen from "../screens/CartScreen";
 const Tab = createBottomTabNavigator();
 const AppNavigator = () => {
   return (
@@ -34,7 +33,7 @@ const AppNavigator = () => {
       />
       <Tab.Screen
         name="Cart"
-        component={AccountScreen}
+        component={CartScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Icon

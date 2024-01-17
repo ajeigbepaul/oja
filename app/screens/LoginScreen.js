@@ -19,8 +19,10 @@ const LoginScreen = () => {
   const isLoggedIn = async () => {
     try {
       const token = await AsyncStorage.getItem("logintoken");
-      if (!token) {
+      if (token) {
         navigation.navigate("Main");
+      }else{
+        navigation.navigate("Login")
       }
     } catch (error) {
       console.log("could not get token", error);

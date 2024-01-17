@@ -3,12 +3,12 @@ const User = require("../models/user");
 
 router.post("/", async (req, res) => {
   try {
-    const { userId, address } = req.body;
+    const { userId, addressData } = req.body;
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "user not found" });
     }
-    user.addresses.push(address);
+    user.addresses.push(addressData);
     await user.save();
     res.status(200).json({ message: "Address created successfully" });
   } catch (error) {

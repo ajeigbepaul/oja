@@ -7,11 +7,12 @@ const ProductItem = ({ item }) => {
   const [addedToCart, setAddedToCart] = useState(false);
   const dispatch = useDispatch();
   const addItemToCart = (item) => {
-    setAddedToCart(true);
-    dispatch(addToCart(item));
-    setTimeout(() => {
-      setAddedToCart(false);
-    }, 5000);
+    // setAddedToCart(true);
+    // dispatch(addToCart(item));
+    // setTimeout(() => {
+    //   setAddedToCart(false);
+    // }, 5000);
+    console.log(item)
   };
   const cart = useSelector((state) => state.cart.cart);
   // console.log(cart)

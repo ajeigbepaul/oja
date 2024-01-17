@@ -18,12 +18,20 @@ import ProductItem from "../components/ProductItem";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { BottomModal, ModalContent, SlideAnimation } from "react-native-modals";
+import useUser from "../contextApi/useUser";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import "core-js/stable/atob";
+import { jwtDecode } from "jwt-decode";
+import client from "../../api/client";
 const HomeScreen = () => {
   const naviagation = useNavigation();
   console.log(deals);
   const [selected, setSelected] = React.useState("");
   const [modalOpen, setModalOpen] = React.useState(false);
-
+  const { userId, setUserId } = useUser();
+  const [addresses, setAddresses] = useState([]);
+  const [selectedaddress, setSelectedAddress] = useState("");
   const data = [
     { key: "2", value: "men's clothing" },
     { key: "3", value: "jewelery" },
@@ -32,7 +40,7 @@ const HomeScreen = () => {
     { key: "6", value: "women's clothing" },
   ];
 
-  console.log(selected);
+  // console.log(selected);
   const list = [
     { id: 0, image: require("../../assets/cookedfood.jpeg"), name: "Home" },
     { id: 1, image: require("../../assets/sofa.jpeg"), name: "Deals" },
@@ -52,20 +60,49 @@ const HomeScreen = () => {
   const image = (index) => ({ image: slides[index % slides.length] });
   const item = slides?.map((_, index) => image(index));
   const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const res = await axios.get("https://fakestoreapi.com/products");
-        setProducts(res?.data);
-      } catch (error) {
-        console.log("something went wrong", error);
+  // userId
+  const fetchUser = async () => {
+    try {
+      const token = await AsyncStorage.getItem("logintoken");
+      const decodedToken = jwtDecode(token);
+      const userId = decodedToken?.userId;
+      setUserId(userId);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  // PRODUCT
+  const fetchProduct = async () => {
+    try {
+      const res = await axios.get("https://fakestoreapi.com/products");
+      setProducts(res?.data);
+    } catch (error) {
+      console.log("something went wrong", error);
+    }
+  };
+  // GET ADDRESS
+  const getAddresses = async () => {
+    console.log(userId);
+    try {
+      const res = await client.get(`/address/${userId}`);
+      if (res) {
+        // console.log(addresses);
+        setAddresses(res?.data);
       }
-    };
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
     fetchProduct();
+    fetchUser();
   }, []);
-  // console.log(products);
-
+  useEffect(() => {
+    if (userId) {
+      getAddresses();
+    }
+  }, [userId, modalOpen]);
+  console.log("the address chosen:",selectedaddress);
   const deals = [
     {
       id: "20",
@@ -187,18 +224,10 @@ const HomeScreen = () => {
       size: "8GB RAM, 128GB Storage",
     },
   ];
-  // const filteredProducts = selected
-  //   ? products.filter((product) => {
-  //       const match = product.category === selected;
-  //       return match;
-  //     })
-  //   : products;
-  // Filter logic
   const filteredProducts = selected
     ? products.filter((product) => product.category === selected)
     : products;
   // console.log("Filtered Products:", filteredProducts);
-  const cart = useSelector((state) => state.cart.cart);
   return (
     <>
       <Screen>
@@ -225,9 +254,12 @@ const HomeScreen = () => {
           <Pressable className="p-4 bg-red-200 flex-row items-center space-x-2">
             <Icon name="location-pin" type="entypo" size={24} />
             <Pressable onPress={() => setModalOpen(!modalOpen)}>
-              <Text className="text-gray-700">
-                Deliver to Ayobo - Lagos 012345
-              </Text>
+              {selectedaddress ? <Text className="text-gray-700" numberOfLines={1}>
+                Deliver to {selectedaddress?.fullname}-{selectedaddress?.address}
+              </Text>:<Text className="text-gray-700">
+                Add an Address
+              </Text>}
+              
             </Pressable>
             <Icon
               name="keyboard-arrow-down"
@@ -392,7 +424,47 @@ const HomeScreen = () => {
             </Text>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <TouchableOpacity className="w-[140px] p-2 mt-5 border border-gray-300 rounded-md h-[140px] items-center justify-center">
+            {/* Already added address */}
+            {addresses?.useraddresses?.map((item, index) => (
+              <Pressable
+                onPress={() => setSelectedAddress(item)}
+                key={index}
+                className={`w-[140px] p-2 mt-5 border border-gray-300 rounded-md h-[140px] items-center justify-center ${
+                  selectedaddress === item ? "bg-red-200" : "bg-white"
+                } `}
+              >
+                <View className="flex flex-row items-center space-x-2">
+                  <Text className="font-semibold">{item?.fullname}</Text>
+                  <Icon
+                    name="location-pin"
+                    type="entypo"
+                    size={28}
+                    color={"red"}
+                  />
+                </View>
+                <View className="w-full px-1">
+                  <Text
+                    className="text-[15px] text-gray-400 w-[100px]"
+                    numberOfLines={1}
+                  >
+                    {item?.address}
+                  </Text>
+                  <Text className="text-[15px] text-gray-400">
+                    {item?.landmark}
+                  </Text>
+                  <Text className="text-[15px] text-gray-400">
+                    {item?.country}
+                  </Text>
+                </View>
+              </Pressable>
+            ))}
+            <TouchableOpacity
+              onPress={() => {
+                setModalOpen(false);
+                naviagation.navigate("Address");
+              }}
+              className="w-[140px] p-2 ml-2 mt-5 border border-gray-300 rounded-md h-[140px] items-center justify-center"
+            >
               <Text className="text-[16px] font-semibold text-blue-400 text-center">
                 Add an Address or pick-up point
               </Text>
@@ -400,11 +472,21 @@ const HomeScreen = () => {
           </ScrollView>
           <View className="mb-0 flex flex-col mt-5">
             <View className="flex flex-row items-center gap-4 mb-2">
-              <Icon name="location-pin" type="entypo" size={28} color={"gray"} />
+              <Icon
+                name="location-pin"
+                type="entypo"
+                size={28}
+                color={"gray"}
+              />
               <Text className="text-gray-400">Enter Zipcode</Text>
             </View>
             <View className="flex flex-row items-center gap-4 mb-2">
-              <Icon name="locate-sharp" type="ionicon" size={28} color={"gray"} />
+              <Icon
+                name="locate-sharp"
+                type="ionicon"
+                size={28}
+                color={"gray"}
+              />
               <Text className="text-gray-400">Use My Current Location</Text>
             </View>
             <View className="flex flex-row items-center gap-4">
