@@ -4,14 +4,19 @@ import {
   ScrollView,
   Pressable,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import client from "../../api/client";
 import useUser from "../contextApi/useUser";
 import { Icon } from "@rneui/base";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
+import { cleanCart } from "../../redux/cartSlice";
 
 const ConfirmationScreen = () => {
+  const naviagation = useNavigation();
+  const dispatch = useDispatch();
   const { userId } = useUser();
   const cart = useSelector((state) => state.cart.cart);
   const total = cart
@@ -43,6 +48,28 @@ const ConfirmationScreen = () => {
   useEffect(() => {
     getAddresses();
   }, []);
+  const placeOrder = async () => {
+    const orderData = {
+      userId: userId,
+      cartItems: cart,
+      totalPrice: total,
+      shippingAddress: selectedaddress,
+      paymentMethod: selectedoption,
+    };
+    try {
+      const res = await client.post("/order", orderData);
+      if (res.status === 200) {
+        dispatch(cleanCart());
+        Alert.alert("Order successfull", "Your Order was successfull");
+        naviagation.navigate("Order");
+        console.log(res.data.order);
+      } else {
+        console.log("Something went wrong", res.data);
+      }
+    } catch (error) {
+      console.log("could not place orders", error);
+    }
+  };
   return (
     <ScrollView className="mt-14">
       <View className="flex-1 p-4">
@@ -227,7 +254,30 @@ const ConfirmationScreen = () => {
                 />
               </Pressable>
             ) : (
-              <Pressable onPress={() => setSelectedoption("Card")}>
+              <Pressable
+                onPress={() => {
+                  setSelectedoption("Card");
+                  Alert.alert("Card Payment", "Pay Online", [
+                    {
+                      text: "Cancel",
+                      onPress: () => console.log("Cancel is pressed"),
+                    },
+                    {
+                      text: "Ok",
+                      onPress: () => {
+                        naviagation.navigate("Billing", {
+                          total: total,
+                          userId: userId,
+                          cartItems: cart,
+                          totalPrice: total,
+                          shippingAddress: selectedaddress,
+                          paymentMethod: "card",
+                        });
+                      },
+                    },
+                  ]);
+                }}
+              >
                 <Icon name="circle" type="entypo" size={18} />
               </Pressable>
             )}
@@ -283,7 +333,7 @@ const ConfirmationScreen = () => {
           </View>
           <TouchableOpacity
             className="bg-orange-300 p-2 rounded-full mt-5"
-            onPress={() => setCurrentStep(3)}
+            onPress={placeOrder}
           >
             <Text className="text-center font-semibold">Place your Order</Text>
           </TouchableOpacity>

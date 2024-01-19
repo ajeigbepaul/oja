@@ -7,6 +7,8 @@ const userAuth = require("./routes/auth")
 const userRoutes = require("./routes/user")
 const verifyRoutes = require("./routes/verificationemail")
 const addressRoutes = require("./routes/address")
+const orderRoutes = require("./routes/order")
+
 // APP CONNECTION
 const app = express();
 // DB CONNECTION
@@ -37,6 +39,7 @@ app.use("/auth", userAuth)
 app.use("/register", userRoutes)
 app.use("/verify", verifyRoutes)
 app.use("/address", addressRoutes)
+app.use("/order", orderRoutes)
 // LISTEN
   connectDB().then(() => {
     app.listen(process.env.PORT || 8000, () => {

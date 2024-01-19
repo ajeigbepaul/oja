@@ -14,23 +14,11 @@ import { Icon } from "@rneui/base";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import client from "../../api/client";
+import "core-js/stable/atob";
+import { jwtDecode } from "jwt-decode";
 const LoginScreen = () => {
   const navigation = useNavigation();
-  const isLoggedIn = async () => {
-    try {
-      const token = await AsyncStorage.getItem("logintoken");
-      if (token) {
-        navigation.navigate("Main");
-      }else{
-        navigation.navigate("Login")
-      }
-    } catch (error) {
-      console.log("could not get token", error);
-    }
-  };
-  useEffect(() => {
-    isLoggedIn();
-  }, []);
+  
   const register = () => {
     navigation.navigate("Register");
   };
@@ -59,7 +47,7 @@ const LoginScreen = () => {
       });
       console.log(res);
       const token = res?.data?.token;
-      console.log(token);
+      console.log("login token",token);
       AsyncStorage.setItem("logintoken", token);
       home();
     } catch (error) {

@@ -10,7 +10,6 @@ import React, { useEffect, useState } from "react";
 import KeyboardAvoidingScreen from "../components/KeyboardAvoidingScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import "core-js/stable/atob";
-import { jwtDecode } from "jwt-decode";
 import useUser from "../contextApi/useUser";
 import client from "../../api/client";
 import { useNavigation } from "@react-navigation/native";

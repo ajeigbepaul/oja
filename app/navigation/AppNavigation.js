@@ -7,9 +7,7 @@ import CartScreen from "../screens/CartScreen";
 const Tab = createBottomTabNavigator();
 const AppNavigator = () => {
   return (
-    <Tab.Navigator
-      screenOptions={{ headerShown: false, tabBarActiveTintColor: "red" }}
-    >
+    <Tab.Navigator screenOptions={{ tabBarActiveTintColor: "red" }}>
       <Tab.Screen
         name="Home"
         component={HomeScreen}
@@ -17,6 +15,7 @@ const AppNavigator = () => {
           tabBarIcon: ({ color, size }) => (
             <Icon name="home" type="font-awesome" color={color} size={size} />
           ),
+          headerShown: false,
         }}
       />
       <Tab.Screen
@@ -43,6 +42,7 @@ const AppNavigator = () => {
               size={size}
             />
           ),
+          headerShown: false,
         }}
       />
     </Tab.Navigator>

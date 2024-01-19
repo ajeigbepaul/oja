@@ -2,21 +2,21 @@ const router = require("express").Router();
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const SALT = 12;
-const nodemailer = require("nodemailer")
+const nodemailer = require("nodemailer");
 // Use dynamic import for crypto-random-string
 const cryptoRandomStringPromise = import("crypto-random-string");
 
 const sendVerificationEmail = async (email, verificationToken) => {
-    const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: "pdave4krist@gmail.com",
-          pass: "avkifrdjfecmxkwx",
-        },
-        tls: {
-            rejectUnauthorized: false
-          }
-      });      
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "pdave4krist@gmail.com",
+      pass: "avkifrdjfecmxkwx",
+    },
+    tls: {
+      rejectUnauthorized: false,
+    },
+  });
   const mailOptions = {
     from: "oja.com",
     to: email,
@@ -51,10 +51,23 @@ router.post("/", async (req, res) => {
     await newUser.save();
     // send a verification email to the user
     sendVerificationEmail(newUser.email, newUser.verificationtoken);
-    res.status(201).json({message:"User created"})
+    res.status(201).json({ message: "User created" });
   } catch (error) {
     // Handle error appropriately
     console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+// Get User for Profile
+router.get("/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "user not found" });
+    }
+    res.status(200).json({ user });
+  } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });

@@ -21,9 +21,9 @@ router.post("/", async (req, res) => {
       return res.status(401).json({ message: "Invalid Password" });
     }
     // Generate token
-    const secretKey = await generateSecret()
-    const token = jwt.sign({ userId: user?._id }, secretKey);
-    res.status(200).json({token})
+    const secretKey = await generateSecret();
+    const token = jwt.sign({ userId: user?._id }, secretKey, { expiresIn: '3600s' });
+    res.status(200).json({ token });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }

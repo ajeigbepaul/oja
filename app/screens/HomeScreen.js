@@ -9,14 +9,13 @@ import {
   Flatlist,
 } from "react-native";
 import { SelectList } from "react-native-dropdown-select-list";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Screen from "../components/Screen";
 import { Icon } from "@rneui/base";
 import SwiperFlatList from "react-native-swiper-flatlist";
 import axios from "axios";
 import ProductItem from "../components/ProductItem";
 import { useNavigation } from "@react-navigation/native";
-import { useSelector } from "react-redux";
 import { BottomModal, ModalContent, SlideAnimation } from "react-native-modals";
 import useUser from "../contextApi/useUser";
 
@@ -25,8 +24,7 @@ import "core-js/stable/atob";
 import { jwtDecode } from "jwt-decode";
 import client from "../../api/client";
 const HomeScreen = () => {
-  const naviagation = useNavigation();
-  console.log(deals);
+  const navigation = useNavigation();
   const [selected, setSelected] = React.useState("");
   const [modalOpen, setModalOpen] = React.useState(false);
   const { userId, setUserId } = useUser();
@@ -60,12 +58,38 @@ const HomeScreen = () => {
   const image = (index) => ({ image: slides[index % slides.length] });
   const item = slides?.map((_, index) => image(index));
   const [products, setProducts] = useState([]);
+  const isLoggedIn = async () => {
+    try {
+      const token = await AsyncStorage.getItem("logintoken");
+      if (token) {
+        const decodedToken = jwtDecode(token);
+        // Check if the token is expired
+        const isTokenExpired = decodedToken.exp * 1000 < Date.now();
+        console.log("Is Token Expired:", isTokenExpired);
+        if (!isTokenExpired) {
+          navigation.navigate("Main");
+        } else {
+          navigation.navigate("Login");
+        }
+      } else {
+        navigation.navigate("Login");
+      }
+    } catch (error) {
+      console.log("Could not get token", error);
+      navigation.navigate("Login");
+    }
+  };
+  useEffect(() => {
+    isLoggedIn();
+  }, []);
   // userId
   const fetchUser = async () => {
     try {
       const token = await AsyncStorage.getItem("logintoken");
       const decodedToken = jwtDecode(token);
+      console.log("Decoded Token:", decodedToken);
       const userId = decodedToken?.userId;
+      console.log(userId);
       setUserId(userId);
     } catch (error) {
       console.log(error);
@@ -82,7 +106,7 @@ const HomeScreen = () => {
   };
   // GET ADDRESS
   const getAddresses = async () => {
-    console.log(userId);
+    // console.log(userId);
     try {
       const res = await client.get(`/address/${userId}`);
       if (res) {
@@ -102,7 +126,7 @@ const HomeScreen = () => {
       getAddresses();
     }
   }, [userId, modalOpen]);
-  console.log("the address chosen:",selectedaddress);
+  // console.log("the address chosen:",selectedaddress);
   const deals = [
     {
       id: "20",
@@ -254,12 +278,14 @@ const HomeScreen = () => {
           <Pressable className="p-4 bg-red-200 flex-row items-center space-x-2">
             <Icon name="location-pin" type="entypo" size={24} />
             <Pressable onPress={() => setModalOpen(!modalOpen)}>
-              {selectedaddress ? <Text className="text-gray-700" numberOfLines={1}>
-                Deliver to {selectedaddress?.fullname}-{selectedaddress?.address}
-              </Text>:<Text className="text-gray-700">
-                Add an Address
-              </Text>}
-              
+              {selectedaddress ? (
+                <Text className="text-gray-700" numberOfLines={1}>
+                  Deliver to {selectedaddress?.fullname}-
+                  {selectedaddress?.address}
+                </Text>
+              ) : (
+                <Text className="text-gray-700">Add an Address</Text>
+              )}
             </Pressable>
             <Icon
               name="keyboard-arrow-down"
@@ -312,7 +338,7 @@ const HomeScreen = () => {
                 key={index}
                 className="w-[150px] h-36 flex-row items-center m-3"
                 onPress={() =>
-                  naviagation.navigate("Info", {
+                  navigation.navigate("Info", {
                     id: item?.id,
                     title: item?.title,
                     price: item?.price,
@@ -345,7 +371,7 @@ const HomeScreen = () => {
                 key={item.id}
                 className="w-40 h-[200px] bg-white mb-2 justify-center"
                 onPress={() =>
-                  naviagation.navigate("Info", {
+                  navigation.navigate("Info", {
                     id: item?.id,
                     title: item?.title,
                     price: item?.price,
@@ -461,7 +487,7 @@ const HomeScreen = () => {
             <TouchableOpacity
               onPress={() => {
                 setModalOpen(false);
-                naviagation.navigate("Address");
+                navigation.navigate("Address");
               }}
               className="w-[140px] p-2 ml-2 mt-5 border border-gray-300 rounded-md h-[140px] items-center justify-center"
             >

@@ -6,15 +6,18 @@ import { Provider } from "react-redux";
 import store from "./store";
 import { ModalPortal } from "react-native-modals";
 import { AuthProvider } from "./app/contextApi/authProvider";
+import { RootSiblingParent } from "react-native-root-siblings";
 export default function App() {
   return (
     <Provider store={store}>
       <AuthProvider>
-        <NavigationContainer>
-          <AuthNavigation />
-          <StatusBar style="auto" />
-          <ModalPortal />
-        </NavigationContainer>
+        <RootSiblingParent>
+          <NavigationContainer>
+            <AuthNavigation />
+            <StatusBar style="auto" />
+            <ModalPortal />
+          </NavigationContainer>
+        </RootSiblingParent>
       </AuthProvider>
     </Provider>
   );

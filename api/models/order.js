@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const orderSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "user",
+    ref: "User",
     required: true,
   },
   products: [
@@ -26,11 +26,11 @@ const orderSchema = new mongoose.Schema({
       },
     },
   ],
-  totalprice: {
+  totalPrice: {
     type: Number,
     required: true,
   },
-  shippingaddress: {
+  shippingAddress: {
     name: String,
     mobilenos: String,
     housenos: String,
@@ -39,7 +39,7 @@ const orderSchema = new mongoose.Schema({
     country: String,
     postalcode: String,
   },
-  paymentmethod: {
+  paymentMethod: {
     type: String,
     required: true,
   },
